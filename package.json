@@ -1,0 +1,84 @@
+{
+  "name": "forgex-cli",
+  "version": "1.0.59",
+  "description": "ForgeX CLI - Solana on-chain market making system command-line tool",
+  "type": "module",
+  "author": "cat",
+  "keywords": [
+    "solana",
+    "cli",
+    "market-making",
+    "defi",
+    "trading",
+    "wallet",
+    "pump-fun",
+    "raydium",
+    "jito"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/forgex-org/forgex",
+    "directory": "cli"
+  },
+  "bin": {
+    "forgex": "./dist/bin/forgex.js"
+  },
+  "files": [
+    "dist/",
+    "scripts/postinstall.js",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc && node scripts/fix-esm-imports.js",
+    "dev": "tsx bin/forgex.ts",
+    "start": "node dist/bin/forgex.js",
+    "clean": "rm -rf dist",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run clean && npm run build",
+    "postinstall": "node scripts/postinstall.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "0.31.0",
+    "@solana/spl-token": "^0.4.13",
+    "@solana/web3.js": "^1.98.4",
+    "axios": "^1.8.3",
+    "bignumber.js": "^9.1.2",
+    "bn.js": "^5.2.1",
+    "bs58": "^6.0.0",
+    "buffer": "^6.0.3",
+    "chalk": "^5.3.0",
+    "cli-progress": "^3.12.0",
+    "cli-table3": "^0.6.5",
+    "commander": "^13.1.0",
+    "crypto-js": "^4.2.0",
+    "dayjs": "^1.11.13",
+    "form-data": "^4.0.1",
+    "inquirer": "^12.3.0",
+    "lodash": "^4.17.21",
+    "ora": "^8.1.1",
+    "pino-pretty": "^13.0.0",
+    "posthog-node": "^5.21.2",
+    "@raydium-io/raydium-sdk-v2": "^0.1.132-alpha"
+  },
+  "devDependencies": {
+    "@types/cli-progress": "^3.11.6",
+    "@types/crypto-js": "^4.2.2",
+    "@types/lodash": "^4.17.20",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^4.0.18"
+  },
+  "peerDependencies": {
+    "@meteora-ag/dlmm": "^1.6.1"
+  },
+  "peerDependenciesMeta": {
+    "@meteora-ag/dlmm": {
+      "optional": true
+    }
+  }
+}
