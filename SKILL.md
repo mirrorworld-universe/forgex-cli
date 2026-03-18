@@ -8,27 +8,11 @@ On-chain market making, from a single command line to your OpenClaw agent.<br/>N
 
 ⛓️ Supported Platforms
 
-| [![Sonic SVM](https://img.shields.io/badge/Sonic_SVM-purple?style=for-the-badge)](https://sonic.game) | [![Solana](https://img.shields.io/badge/Solana-9945FF?style=for-the-badge&logo=solana&logoColor=white)](https://solana.com) | [![Pump.fun](https://img.shields.io/badge/Pump.fun-green?style=for-the-badge)](https://pump.fun) | [![Jito Bundle](https://img.shields.io/badge/Jito_Bundle-orange?style=for-the-badge)](https://jito.wtf) | [![OpenClaw](https://img.shields.io/badge/OpenClaw_Native-blue?style=for-the-badge)](https://openclaw.ai) |
-
-|:---:|:---:|:---:|:---:|:---:|
+[![Sonic SVM](https://img.shields.io/badge/Sonic_SVM-purple?style=for-the-badge)](https://sonic.game) [![Solana](https://img.shields.io/badge/Solana-9945FF?style=for-the-badge&logo=solana&logoColor=white)](https://solana.com) [![Pump.fun](https://img.shields.io/badge/Pump.fun-green?style=for-the-badge)](https://pump.fun) [![Jito Bundle](https://img.shields.io/badge/Jito_Bundle-orange?style=for-the-badge)](https://jito.wtf) [![OpenClaw](https://img.shields.io/badge/OpenClaw_Native-blue?style=for-the-badge)](https://openclaw.ai) 
 
 ---
 
-[![npm version](https://img.shields.io/npm/v/forgex-cli?color=blue)](https://www.npmjs.com/package/forgex-cli)
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
-[![Open Source](https://img.shields.io/badge/Open%20Source-✓-brightgreen)](https://github.com)
-
-[![Jito Bundle](https://img.shields.io/badge/Jito%20Bundle-✓-orange)](https://jito.wtf)
-
-[![Multi-wallet](https://img.shields.io/badge/Multi--wallet-✓-blue)](.)
-
-[![Sonic SVM](https://img.shields.io/badge/Sonic%20SVM-✓-purple)](https://sonic.game)
-
-[![OpenClaw Native](https://img.shields.io/badge/OpenClaw%20Native-✓-blue)](https://openclaw.ai)
-
-[![On-chain Market Making](https://img.shields.io/badge/On--chain%20Market%20Making-✓-green)](.)
+[![npm version](https://img.shields.io/npm/v/forgex-cli?color=blue)](https://www.npmjs.com/package/forgex-cli) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) [![Open Source](https://img.shields.io/badge/Open%20Source-✓-brightgreen)](https://github.com) [![Jito Bundle](https://img.shields.io/badge/Jito%20Bundle-✓-orange)](https://jito.wtf) [![Multi-wallet](https://img.shields.io/badge/Multi--wallet-✓-blue)](.) [![Sonic SVM](https://img.shields.io/badge/Sonic%20SVM-✓-purple)](https://sonic.game) [![OpenClaw Native](https://img.shields.io/badge/OpenClaw%20Native-✓-blue)](https://openclaw.ai) [![On-chain Market Making](https://img.shields.io/badge/On--chain%20Market%20Making-✓-green)](.)
 
 ---
 
