@@ -15,7 +15,9 @@ import { PumpAmmCalc, LaunchlabAmmCalc } from '../calc';
 import BigNumber from 'bignumber.js';
 import { getWalletAddress, getWalletKeypair } from '@/utils';
 import { createLutAccount, extendLutAccount } from '../account';
-import type { Provider } from '@reown/appkit-adapter-solana/react';
+interface Provider {
+  signTransaction<T extends import('@solana/web3.js').Transaction | import('@solana/web3.js').VersionedTransaction>(transaction: T): Promise<T>;
+}
 import { PUMP_FUN_PROGRAM } from '@/const';
 import { getJitoAdapter } from '@/adapters/jito-adapter.js';
 import { sleep } from '@/utils';
