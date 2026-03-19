@@ -43,6 +43,7 @@ export function registerTransferCommands(program: Command): void {
     .option('--amount <type>', 'Amount type: all | fixed | reserve', 'all')
     .option('--value <n>', 'Amount value (SOL or token count)')
     .option('--priority-fee <sol>', 'Priority fee (SOL)')
+    .option('--count <n>', 'Number of source wallets to collect from (default: all)')
     .option('--dry-run', 'Simulate only, do not execute', false)
     .action(async (options) => {
       try {
@@ -90,7 +91,22 @@ export function registerTransferCommands(program: Command): void {
           process.exit(1);
         }
 
-        const wallets = buildWalletList(group);
+        let wallets = buildWalletList(group);
+
+        // --count: limit number of source wallets
+        if (options.count) {
+          const count = Number(options.count);
+          if (isNaN(count) || !Number.isInteger(count) || count <= 0) {
+            error('--count must be a positive integer');
+            process.exit(1);
+          }
+          if (count > wallets.length) {
+            error(`--count (${count}) exceeds wallet count in source group (${wallets.length})`);
+            process.exit(1);
+          }
+          wallets = wallets.slice(0, count);
+        }
+
         const ds = getDataSource();
 
         if (options.dryRun) {
@@ -170,6 +186,7 @@ export function registerTransferCommands(program: Command): void {
     .option('--batch-size <n>', 'Batch size', '20')
     .option('--multi-hop', 'Enable multi-hop transfer (via 6 temp relay wallets, SOL only)', false)
     .option('--hop-count <n>', 'Number of relay wallets (default 6)', '6')
+    .option('--count <n>', 'Number of target wallets to distribute to (default: all)')
     .option('--dry-run', 'Simulate only, do not execute', false)
     .action(async (options) => {
       try {
@@ -211,6 +228,21 @@ export function registerTransferCommands(program: Command): void {
         if (!toGroup) { error(`Target wallet group ${toGroupId} does not exist`); process.exit(1); }
         if (toGroup.wallets.length === 0) { error('Target wallet group has no wallets'); process.exit(1); }
 
+        // --count: limit number of target wallets
+        let targetWallets = toGroup.wallets;
+        if (options.count) {
+          const count = Number(options.count);
+          if (isNaN(count) || !Number.isInteger(count) || count <= 0) {
+            error('--count must be a positive integer');
+            process.exit(1);
+          }
+          if (count > toGroup.wallets.length) {
+            error(`--count (${count}) exceeds wallet count in target group (${toGroup.wallets.length})`);
+            process.exit(1);
+          }
+          targetWallets = toGroup.wallets.slice(0, count);
+        }
+
         const priorityFee = options.priorityFee
           ? Number(options.priorityFee)
           : config.defaultPriorityFee;
@@ -242,13 +274,13 @@ export function registerTransferCommands(program: Command): void {
         if (options.dryRun) {
           // Balance pre-check -- via DataSource
           const balance = await ds.getSolBalance(options.from);
-          const totalNeeded = Number(options.value) * toGroup.wallets.length;
+          const totalNeeded = Number(options.value) * targetWallets.length;
           output({
             dryRun: true,
             from: options.from,
             fromBalance: balance,
             toGroup: toGroupId,
-            targetCount: toGroup.wallets.length,
+            targetCount: targetWallets.length,
             amountPerWallet: Number(options.value),
             totalNeeded,
             sufficient: balance >= totalNeeded,
@@ -263,7 +295,7 @@ export function registerTransferCommands(program: Command): void {
         if (options.token === 'SOL') {
           // Balance pre-check
           const balance = await ds.getSolBalance(options.from);
-          const targets = toGroup.wallets.map(w => {
+          const targets = targetWallets.map(w => {
             let amount = Number(options.value);
             if (options.amount === 'random' && options.max) {
               amount = Math.random() * (Number(options.max) - amount) + amount;
