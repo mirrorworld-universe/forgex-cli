@@ -344,6 +344,10 @@ Options: `--direction up|down`, `--target-price <sol>`, `--amount <sol>`, `--max
 forgex --password "pwd" transfer in \
   --to "MainWalletAddress" --from-group 1 --amount all
 
+# Collect from only the first 5 wallets
+forgex --password "pwd" transfer in \
+  --to "MainWalletAddress" --from-group 1 --amount all --count 5
+
 # Keep 0.01 SOL in each wallet, collect the rest
 forgex --password "pwd" transfer in \
   --to "MainWalletAddress" --from-group 1 \
@@ -363,6 +367,10 @@ forgex --password "pwd" transfer in \
 # Send 0.1 SOL to each wallet in group
 forgex --password "pwd" transfer out \
   --from "SourceAddress" --to-group 1 --value 0.1
+
+# Distribute to only the first 10 wallets
+forgex --password "pwd" transfer out \
+  --from "SourceAddress" --to-group 1 --value 0.1 --count 10
 
 # Random distribution between 0.05 and 0.15 SOL
 forgex --password "pwd" transfer out \
