@@ -16,6 +16,45 @@ import {
   buildWalletList,
   getTokenBalance,
 } from '../../adapters/sdk-adapter.js';
+import { getDataSource } from '../../data-source.js';
+import type { TrackingContext } from '../../tx-tracker/index.js';
+
+/**
+ * Fire-and-forget: track transaction results in background to update local holdings/balances.
+ * Does not block output or process exit.
+ */
+function trackInBackground(
+  result: { success: boolean; txHashes?: string[]; bundleId?: string },
+  tokenCA: string,
+  groupId: number,
+  tradeType: TrackingContext['txType'],
+  walletAddresses: string[],
+): void {
+  if (!result.success) return;
+
+  const ds = getDataSource();
+  const context: TrackingContext = {
+    ca: tokenCA,
+    groupId,
+    txType: tradeType,
+    wallets: walletAddresses,
+    jitoBundle: result.bundleId,
+  };
+
+  const doTrack = async () => {
+    if (result.bundleId && result.txHashes) {
+      await ds.trackBundle(result.bundleId, result.txHashes, context);
+    } else if (result.txHashes && result.txHashes.length > 0) {
+      await ds.trackBatch(
+        result.txHashes.map(txHash => ({ txHash, context })),
+      );
+    }
+  };
+
+  doTrack().catch(() => {
+    // Silent fail - tracking is best-effort, should not affect CLI exit
+  });
+}
 
 export function registerTradeCommands(program: Command): void {
   const tradeCmd = program
@@ -70,6 +109,7 @@ export function registerTradeCommands(program: Command): void {
         });
         restoreConsole();
         output(result);
+        if (!options.dryRun) trackInBackground(result, options.token, groupId, 'buy', wallets.map(w => w.address));
         if (!result.success && !options.dryRun) process.exit(1);
       } catch (e: any) {
         restoreConsole();
@@ -159,6 +199,7 @@ export function registerTradeCommands(program: Command): void {
         });
         restoreConsole();
         output(result);
+        if (!options.dryRun) trackInBackground(result, options.token, groupId, 'sell', wallets.map(w => w.address));
         if (!result.success && !options.dryRun) process.exit(1);
       } catch (e: any) {
         restoreConsole();
@@ -221,6 +262,10 @@ export function registerTradeCommands(program: Command): void {
         });
         restoreConsole();
         output(result);
+        if (!options.dryRun) {
+          const txType = options.type === 'sell' ? 'sell' : 'buy';
+          trackInBackground(result, options.token, groupId, txType as TrackingContext['txType'], wallets.map(w => w.address));
+        }
         if (!result.success && !options.dryRun) process.exit(1);
       } catch (e: any) {
         restoreConsole();
@@ -286,6 +331,7 @@ export function registerTradeCommands(program: Command): void {
         });
         restoreConsole();
         output(result);
+        if (!options.dryRun) trackInBackground(result, options.token, groupId, 'buy', wallets.map(w => w.address));
         if (!result.success && !options.dryRun) process.exit(1);
       } catch (e: any) {
         restoreConsole();
