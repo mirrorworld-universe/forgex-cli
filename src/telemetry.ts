@@ -18,8 +18,8 @@ import { FORGEX_DIR, ensureConfigDir, loadConfig } from './config.js';
 // Constants
 // ============================================================
 
-const POSTHOG_API_KEY = 'phx_vSIGADbpPIvlpvtX27myNnajZsWjjcwM4JiZAljukmU6LYI';
-const POSTHOG_HOST = 'https://us.i.posthog.com';
+const POSTHOG_API_KEY = 'phc_nYSQzmljgTrNqmuHonEWEjGXzX97B9w81D9DzsiVYlX';
+const POSTHOG_HOST = 'https://eu.i.posthog.com';
 const ANONYMOUS_ID_FILE = path.join(FORGEX_DIR, '.anonymous-id');
 
 // ============================================================
