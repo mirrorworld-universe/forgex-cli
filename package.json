@@ -1,6 +1,6 @@
 {
   "name": "forgex-cli",
-  "version": "1.0.64",
+  "version": "1.0.65",
   "description": "ForgeX CLI - Solana on-chain market making system command-line tool",
   "type": "module",
   "author": "cat",
