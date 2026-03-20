@@ -1,6 +1,6 @@
 {
   "name": "forgex-cli",
-  "version": "1.0.65",
+  "version": "1.0.66",
   "description": "ForgeX CLI - Solana on-chain market making system command-line tool",
   "type": "module",
   "author": "cat",
@@ -29,7 +29,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsc && node scripts/fix-esm-imports.js",
+    "build": "tsc && node scripts/fix-esm-imports.js && cp package.json dist/package.json",
     "dev": "tsx bin/forgex.ts",
     "start": "node dist/bin/forgex.js",
     "clean": "rm -rf dist",

@@ -476,8 +476,27 @@ export async function executeTrades(params: {
         const txResults: { txHash: string; success: boolean; error?: string }[] = [];
         for (let i = 0; i < base64Txs.length; i++) {
           try {
-            const result = await ds.sendTransaction(base64Txs[i]);
-            txResults.push({ txHash: result.txHash, success: true });
+            // Simulate before sending to catch errors early
+            const txBuf = Buffer.from(base64Txs[i], 'base64');
+            const { Transaction: LegacyTx, VersionedTransaction: VTx } = await import('@solana/web3.js');
+            let simResult;
+            try {
+              const vtx = VTx.deserialize(txBuf);
+              simResult = await connection.simulateTransaction(vtx);
+            } catch {
+              const ltx = LegacyTx.from(txBuf);
+              simResult = await connection.simulateTransaction(ltx);
+            }
+            if (simResult.value.err) {
+              txResults.push({
+                txHash: '',
+                success: false,
+                error: `Simulation failed: ${JSON.stringify(simResult.value.err)} | ${simResult.value.logs?.slice(-5)?.join(' | ')}`,
+              });
+              continue;
+            }
+            const result = await connection.sendRawTransaction(txBuf, { skipPreflight: false });
+            txResults.push({ txHash: result, success: true });
           } catch (err: any) {
             txResults.push({ txHash: '', success: false, error: err.message });
           }

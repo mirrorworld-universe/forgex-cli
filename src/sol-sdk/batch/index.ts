@@ -1055,21 +1055,27 @@ export const pumpBatchTrade = async ({
             break;
           }
 
-          // Add sell instruction
+          // Add sell instruction (filter out ComputeBudget to avoid duplicates with buy)
+          // In buyWithSell, sell minSolOutput=0 to avoid slippage errors
+          // (buy pushes price up within same tx, making sell output lower than calculated)
           const sellTx = await pumpSellSPLInstructions(
             provider,
             currentPayer,
             tokenAddress,
             sellTokenAmount,
             slippage,
-            sellReceiveAmount,
+            '0',
             creator
           );
-          tx.add(sellTx);
+          for (const ix of sellTx.instructions) {
+            if (!ix.programId.equals(ComputeBudgetProgram.programId)) {
+              tx.add(ix);
+            }
+          }
         }
 
-        // All instructions already added compute budget and jito tip internally
-        const finalTx = getTx(tx, currentPayer, priorityFee);
+        // Buy/sell instructions already include ComputeBudget, only add Jito tip
+        const finalTx = getTx(tx, currentPayer, priorityFee, jito, undefined, false);
         const base64Tx = await getBase64Tx({
           tx: finalTx,
           payer: currentPayer,
