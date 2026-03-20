@@ -75,7 +75,14 @@ export async function sellInstructions(
 
   const creatorVault = getCreatorVaultPDA(creator);
   const connection = provider.connection;
-  const balance = await connection.getTokenAccountBalance(associatedUser);
+  // In buyWithSell scenario, token ATA may not exist yet (buy hasn't executed),
+  // so getTokenAccountBalance will fail. Catch the error and treat as "sell all".
+  let balance: { value: { amount: string } | null } = { value: null };
+  try {
+    balance = await connection.getTokenAccountBalance(associatedUser);
+  } catch (_err) {
+    // ATA does not exist yet (buyWithSell scenario), skip balance check
+  }
 
   let transaction = new Transaction();
 
@@ -130,7 +137,10 @@ export async function sellInstructions(
   transaction.add(ix);
 
   // Close ATA if selling all tokens
-  if (balance.value && BigInt(balance.value.amount) === amount) {
+  // When balance.value is null (buyWithSell scenario, ATA not yet created),
+  // we still close ATA since the buy+sell in same tx will create then drain it.
+  const shouldCloseAta = !balance.value || BigInt(balance.value.amount) === amount;
+  if (shouldCloseAta) {
     transaction.add(
       createCloseAccountInstruction(
         associatedUser,

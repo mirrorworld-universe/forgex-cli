@@ -279,6 +279,7 @@ export function registerToolsCommands(program: Command): void {
     .requiredOption('--token <ca>', 'Token contract address')
     .option('--mode <mode>', 'Volume mode: 1b1s | 1b2s | 1b3s | 2b1s | 3b1s', '1b1s')
     .option('--amount <sol>', 'Trade amount (SOL)', '0.01')
+    .option('--count <n>', 'Number of wallets to use (default: all)')
     .option('--interval <ms>', 'Trade interval (ms)', '5000')
     .option('--rounds <n>', 'Number of rounds (0=infinite)', '1')
     .option('--slippage <bps>', 'Slippage (bps)', '300')
@@ -353,8 +354,7 @@ export function registerToolsCommands(program: Command): void {
           return;
         }
 
-        const wallets = buildWalletList(group);
-        const walletAddresses = wallets.map(w => w.address);
+        const allWallets = buildWalletList(group);
         const amountSOL = options.amount;
         let currentRound = 0;
 
@@ -368,6 +368,38 @@ export function registerToolsCommands(program: Command): void {
               context = await fetchTradeContext(options.token);
             }
 
+            // Filter wallets with sufficient SOL balance (amount + 0.005 SOL for fees)
+            const minRequired = Number(amountSOL) + 0.005;
+            const walletBalances = await Promise.all(
+              allWallets.map(async (w) => {
+                try {
+                  const bal = await context.connection.getBalance(
+                    new (await import('@solana/web3.js')).PublicKey(w.address)
+                  );
+                  return { wallet: w, balance: bal / 1e9 };
+                } catch {
+                  return { wallet: w, balance: 0 };
+                }
+              })
+            );
+            let wallets = walletBalances
+              .filter(wb => wb.balance >= minRequired)
+              .map(wb => wb.wallet);
+
+            // Limit wallet count if --count is specified
+            const walletCount = options.count ? Number(options.count) : 0;
+            if (walletCount > 0 && wallets.length > walletCount) {
+              wallets = wallets.slice(0, walletCount);
+            }
+
+            if (wallets.length === 0) {
+              info(`Round ${currentRound}: no wallets with sufficient balance (need >= ${minRequired} SOL), skipping`);
+              output({ round: currentRound, total: 0, success: 0, failed: 0, message: `No wallets with sufficient balance (need >= ${minRequired} SOL)` });
+              return;
+            }
+
+            info(`Round ${currentRound}: using ${wallets.length}/${allWallets.length} wallets`);
+
             // Suppress SDK console.log in JSON mode
             if (getOutputFormat() === 'json') suppressConsole();
 
@@ -379,6 +411,7 @@ export function registerToolsCommands(program: Command): void {
               slippage,
               priorityFee,
               volumeType: options.mode,
+              intervalMs: Number(options.interval),
             });
 
             restoreConsole();

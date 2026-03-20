@@ -353,8 +353,9 @@ export async function executeTrades(params: {
   priorityFee: number;
   volumeType?: string;
   simulate?: boolean;
+  intervalMs?: number;
 }): Promise<TradeResult> {
-  const { context, wallets, tradeType, amountPerWallet, slippage, priorityFee, simulate } = params;
+  const { context, wallets, tradeType, amountPerWallet, slippage, priorityFee, simulate, intervalMs } = params;
 
   try {
     // Build walletAmounts
@@ -469,13 +470,26 @@ export async function executeTrades(params: {
     const connection = context.connection;
 
     try {
-      // buyWithSell (volume trading) requires same-block execution, use Jito Bundle
-      if (tradeType === 'buyWithSell' && base64Txs.length > 1) {
-        const bundleResult = await ds.sendBundle(base64Txs);
+      // buyWithSell (volume trading): each wallet's buy+sell is already combined
+      // into a single tx, send them independently (no need for bundle).
+      if (tradeType === 'buyWithSell') {
+        const txResults: { txHash: string; success: boolean; error?: string }[] = [];
+        for (let i = 0; i < base64Txs.length; i++) {
+          try {
+            const result = await ds.sendTransaction(base64Txs[i]);
+            txResults.push({ txHash: result.txHash, success: true });
+          } catch (err: any) {
+            txResults.push({ txHash: '', success: false, error: err.message });
+          }
+          // Wait interval between wallets (not after the last one)
+          if (intervalMs && intervalMs > 0 && i < base64Txs.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, intervalMs));
+          }
+        }
         return {
-          success: true,
-          bundleId: bundleResult.bundleId,
-          txHashes: [],
+          success: txResults.some(r => r.success),
+          txHashes: txResults.filter(r => r.success).map(r => r.txHash),
+          details: txResults,
         };
       }
 
