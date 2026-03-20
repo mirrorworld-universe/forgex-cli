@@ -103,6 +103,7 @@ forgex --password "your-password" tools volume \
   --token "TOKEN_MINT_ADDRESS" \
   --mode 1b1s \
   --amount 0.01 \
+  --count 10 \
   --rounds 20 \
   --interval 10000
 ```
@@ -298,19 +299,21 @@ forgex --password "pwd" tools turnover \
 
 **Volume bot**
 
-Generates on-chain trading volume with zero net loss (buy + sell in same bundle).
+Generates on-chain trading volume with zero net loss (buy + sell in same transaction).
 
 ```bash
 # Simulate
 forgex --password "pwd" tools volume \
   --group 1 --token "TOKEN_CA" --dry-run
 
-# Run 20 rounds, every 10 seconds
+# Run 20 rounds, every 10 seconds, using 10 wallets
 forgex --password "pwd" tools volume \
   --group 1 --token "TOKEN_CA" \
-  --mode 1b1s --amount 0.01 \
+  --mode 1b1s --amount 0.01 --count 10 \
   --daemon --rounds 20 --interval 10000
 ```
+
+Options: `--group <id>`, `--token <ca>`, `--mode 1b1s|1b2s|1b3s|2b1s|3b1s`, `--amount <sol>`, `--count <n>` (limit wallets, default: all), `--interval <ms>` (delay between wallets), `--rounds <n>`, `--daemon`, `--dry-run`
 
 **Price robot**
 
@@ -508,7 +511,7 @@ forgex --password "pwd" token create \
 ```bash
 forgex --password "pwd" tools volume \
   --group 1 --token "TOKEN_CA" \
-  --mode 1b1s --amount 0.01 \
+  --mode 1b1s --amount 0.01 --count 10 \
   --rounds 30 --interval 10000
 ```
 
