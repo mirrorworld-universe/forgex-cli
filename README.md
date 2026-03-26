@@ -8,7 +8,7 @@ On-chain market making, from a single command line to your OpenClaw agent.<br/>N
 
 ⛓️ Supported Platforms
 
-[![Sonic SVM](https://img.shields.io/badge/Sonic_SVM-purple?style=for-the-badge)](https://sonic.game) [![Solana](https://img.shields.io/badge/Solana-9945FF?style=for-the-badge&logo=solana&logoColor=white)](https://solana.com) [![Pump.fun](https://img.shields.io/badge/Pump.fun-green?style=for-the-badge)](https://pump.fun) [![Jito Bundle](https://img.shields.io/badge/Jito_Bundle-orange?style=for-the-badge)](https://jito.wtf) [![OpenClaw](https://img.shields.io/badge/OpenClaw_Native-blue?style=for-the-badge)](https://openclaw.ai) 
+[![Sonic SVM](https://img.shields.io/badge/Sonic_SVM-purple?style=for-the-badge)](https://sonic.game) [![Solana](https://img.shields.io/badge/Solana-9945FF?style=for-the-badge&logo=solana&logoColor=white)](https://solana.com) [![Pump.fun](https://img.shields.io/badge/Pump.fun-green?style=for-the-badge)](https://pump.fun) [![Raydium](https://img.shields.io/badge/Raydium-2B6DEF?style=for-the-badge)](https://raydium.io) [![Jito Bundle](https://img.shields.io/badge/Jito_Bundle-orange?style=for-the-badge)](https://jito.wtf) [![OpenClaw](https://img.shields.io/badge/OpenClaw_Native-blue?style=for-the-badge)](https://openclaw.ai)
 
 ---
 

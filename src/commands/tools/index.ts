@@ -368,8 +368,8 @@ export function registerToolsCommands(program: Command): void {
               context = await fetchTradeContext(options.token);
             }
 
-            // Filter wallets with sufficient SOL balance (amount + 0.005 SOL for fees)
-            const minRequired = Number(amountSOL) + 0.005;
+            // Filter wallets with sufficient SOL balance (amount + 0.002 SOL for fees)
+            const minRequired = Number(amountSOL) + 0.002;
             const walletBalances = await Promise.all(
               allWallets.map(async (w) => {
                 try {
